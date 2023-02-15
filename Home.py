@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import datetime
 
 
@@ -9,109 +10,108 @@ from selenium.webdriver.common.by import By
 
 import streamlit as st
 
+from ZilliZ_scraping_functions import *
 
 
+def return_months_between_dates(start_date, end_date):
+    if start_date.month < 10:        
+        eerste_maand = [f"0{start_date.month}-{start_date.year}"]
+    else:
+        eerste_maand = [f"{start_date.month}-{start_date.year}"]
+    overige_maanden = pd.date_range(start_date, end_date, freq='MS').strftime("%m-%Y").tolist()
+    
+    return eerste_maand + overige_maanden
 
+def haal_alle_maanden_uit_ZilliZ(driver, datums):
+    dfs = []
+    for datum in datums:
+        try:    
+            dfs.append(haal_uren_per_maand_uit_ZilliZ(driver, datum))
+        except Exception as e: 
+            st.write(e)
+            st.warning(f"Voor periode {datum} zijn geen uren geschreven")
+    
+    return pd.concat(dfs)
+
+
+def scrape_ZilliZ(user_name, password, start_date, end_date):    
+    # Login to Twitter using Selenium
+    driver = login(user_name, password)
+    
+    datums = return_months_between_dates(start_date, end_date)
+    df = haal_alle_maanden_uit_ZilliZ(driver, datums)
+
+    # filter op de geselecteerde data
+    df = df[(df["datum"] >= pd.to_datetime(start_date)) & (df["datum"] <= pd.to_datetime(end_date))]
+    return df
+    # df.to_csv("df.csv")
+
+# interessante_kolommen = [
+#   "naam",
+#   "uur",
+#   "datum",
+#   "dienst",
+#   "omschrijving",
+#   "jaar",
+#   "maand",
+#   "week",
+#   "dag",
+#   "naam_van_dag"
+# ]
+
+st.header("Uren overzicht voor ZilliZ")
 today = datetime.date.today()
 tomorrow = today + datetime.timedelta(days=1)
 
-start_date = st.date_input('Start date', today)
-end_date = st.date_input('End date', tomorrow)
+st.subheader("1. Selecteer de data")
+date1, date2 = st.columns(2)
 
-if start_date < end_date:
-    st.success('Start date: `%s`\n\nEnd date: `%s`' % (start_date, end_date))
-else:
-    st.error('Error: End date must fall after start date.')
+start_date = date1.date_input('Start datum (YYYY/MM/DD)', today)
+end_date = date2.date_input('Eind datum (YYYY/MM/DD)', tomorrow)
 
-def login(user_name, password):
-    """Functie voor het inloggen bij ZilliZ en het creeren van een chrome driver.
+if start_date > end_date:
+    st.error('Error: Eind datum moet later zijn dan start datum.')
+    
 
-    Args:
-        user_name (str): _description_
-        password (str): _description_
-    """
-    #Create a Chrome driver
-    driver = webdriver.Chrome()
-    driver.get("https://host.landmerc.nl/zilliz/")
+else:    
+    st.subheader("2. Vul je inloggegevens voor ZilliZ in")
+    login1, login2 = st.columns(2)
+    user_name = login1.text_input("ZilliZ gebruikersnaam", value="testvast")
+    password = login2.text_input("ZilliZ wachtwoord", value="!1Testvast")
     
-    #Use the data to login
-    element = driver.find_element(By.ID,"aus_username")
-    element.send_keys(user_name)
-    element = driver.find_element(By.ID,"aus_password")
-    element.send_keys(password)
-    
-    # Log in bij ZilliZ
-    element.send_keys(Keys.RETURN)
-    
-    return driver
-
-def verwerk_maandoverzicht_tabellen(headers, bodies):
-    
-    tables = []
-    for i in range(len(headers)):        
-        thead = "<thead>" + headers[i].get_attribute('innerHTML') + "</thead>"
-        tbody = "<tbody>" + bodies[i].get_attribute('innerHTML') + "</tbody>"
-        table = "<table>" + thead + tbody + "</table>"
-        tables.append(" ".join(table.split()))
+    is_button_clicked =  st.button('Haal informatie op')
+     
         
-    dfs = [pd.read_html(table)[0] for table in tables]
-    for i in range(len(dfs)):
-        dfs[i] = dfs[i].iloc[0:-1]
-        dfs[i]["naam"] = dfs[i].columns[0]
-        dfs[i] = dfs[i].rename(columns={dfs[i].columns[0]: "week"})  
-        # st.write(df)
-    st.write(dfs[0])
-    # st.write(dfs[0].iloc[0:-1])
-    # for df in dfs:
-    #     st.write(df)
-    # st.write(pd.concat(dfs))
-    return
+if is_button_clicked:
+    df = scrape_ZilliZ(user_name, password, start_date, end_date)
+    # df = pd.read_csv("df.csv")
     
-def uren_per_maand(driver, maand_jaar):
-    """Ga naar het maandoverzicht van de administratie en haal alle uren gegevens op per werknemer.
-
-    Args:
-        driver (webdriver.Chrome): _description_
-        maand (str): MM-YYYY
-    """
-    # Ga naar het maandoverzicht
-    driver.get("https://host.landmerc.nl/applicatie/index.cfm?fuseaction=beheer_administratie.maandstaat_overzicht")
+    st.subheader("Hoeveel uur heeft iedereen gewerkt?")
+    st.write(f"*In de periode van {start_date.day}-{start_date.month}-{start_date.year} tot {end_date.day}-{end_date.month}-{end_date.year}")
     
-    # click op "maandstaat per medewerker"
-    driver.find_element(By.XPATH, "/html/body/div[1]/div[2]/div[2]/section[1]/form/div[1]/div[2]/div/div/div[1]").click()
     
-    # selecteer alle werknemers
-    driver.find_element(By.XPATH, "//div[@class='dropdown bootstrap-select show-tick form-control zil-selectie d-print-none']").click()
-    driver.find_element(By.XPATH, "//button[@class='actions-btn bs-select-all btn btn-light']").click()
+    werknemers_select = st.multiselect("Naar welke werknemers wil je kijken?",
+                   set(df["naam"]),
+                   set(df["naam"]))
     
-    # klik op maand dropdown en selecteer de juist maand
-    driver.find_element(By.XPATH, "/html/body/div[1]/div[2]/div[2]/section[1]/form/div[1]/div[1]/div[1]/div/div[1]/button").click()
-    driver.find_element(By.XPATH, f"//span[text()='{maand_jaar}']").click()
+    totalen_pivot = df[df["naam"].isin(werknemers_select)].pivot_table("uur", "naam", aggfunc=np.sum)
+    st.bar_chart(totalen_pivot, height=600)
     
-    # toon overzicht van de maand
-    formulier_element = driver.find_element(By.XPATH, "//div[@class='formulier_knoppen']")
-    formulier_element.find_element(By.XPATH, ".//*").click()
     
-    # lees de tabel uit
-    tables_elements = driver.find_element(By.XPATH, "//table")
-    headers = tables_elements.find_elements(By.XPATH, "//thead")
-    bodies = tables_elements.find_elements(By.XPATH, "//tbody")
-
-    df = verwerk_maandoverzicht_tabellen(headers, bodies)
     
-
-def scrape_ZilliZ():    
-    #Login to Twitter using Selenium
+    st.subheader("3. Waar spendeert iemand tijd aan?")
     
-    #Data needed to login
-    user_name = "testvast"
-    password = "Testvast1!"
+    col1, col2 = st.columns(2)
     
-    driver = login(user_name, password)
+    werknemer = col1.selectbox("Naar welke werknemer wil je kijken?",
+                   list(set(df["naam"])))
+    col1.write(werknemer)
     
-    uren_per_maand(driver, "02-2023")
-
-if st.button('Start scraping ZilliZ') or True:
-    result = 1 + 2
-    st.write('result: %s' % result)
-    scrape_ZilliZ()
+    Kolom_select = col2.selectbox("Naar welke gegevens wil je kijken?",
+                                  list(df.columns.values))
+                                # [col for col in df.columns if col not in ["naam", "uur", "comp. uren", "toeslag (uur)"]])
+    col2.write(Kolom_select)
+    
+    werknemer_pivot = df[df["naam"] == werknemer].pivot_table("uur", Kolom_select, aggfunc=np.sum)
+    
+    st.bar_chart(werknemer_pivot, height=600)

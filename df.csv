@@ -1,0 +1,36 @@
+,naam,week,naam_van_dag,datum,dienst,omschrijving,uur,toeslag (uur),comp. uren,jaar,maand,dag
+1,"Nicolai, dhr. (Jos)",week 1,ma,2023-02-01,werk,Medicatie/pieps,6.5,,,2023,2,1
+21,"Nicolai, dhr. (Jos)",week 3,vr,2023-01-20,werk,huis,2.0,,,2023,1,20
+22,"Nicolai, dhr. (Jos)",week 3,vr,2023-01-20,werk,datsja,4.0,,,2023,1,20
+23,"Nicolai, dhr. (Jos)",week 3,za,2023-01-21,werk,huis,8.0,,,2023,1,21
+24,"Nicolai, dhr. (Jos)",week 3,zo,2023-01-22,werk,huis,4.0,,,2023,1,22
+25,"Nicolai, dhr. (Jos)",week 4,ma,2023-01-23,werk,huis/tuinteam,8.0,,,2023,1,23
+26,"Nicolai, dhr. (Jos)",week 4,di,2023-01-24,,,,,,2023,1,24
+27,"Nicolai, dhr. (Jos)",week 4,wo,2023-01-25,werk,huis/facility,6.5,,,2023,1,25
+28,"Nicolai, dhr. (Jos)",week 4,do,2023-01-26,,,,,,2023,1,26
+29,"Nicolai, dhr. (Jos)",week 4,vr,2023-01-27,werk,huis,2.0,,,2023,1,27
+30,"Nicolai, dhr. (Jos)",week 4,vr,2023-01-27,werk,school/huis,5.0,,,2023,1,27
+31,"Nicolai, dhr. (Jos)",week 4,za,2023-01-28,,,,,,2023,1,28
+32,"Nicolai, dhr. (Jos)",week 4,zo,2023-01-29,,,,,,2023,1,29
+33,"Nicolai, dhr. (Jos)",week 5,ma,2023-01-30,werk,huis/facility,7.0,,,2023,1,30
+34,"Nicolai, dhr. (Jos)",week 5,di,2023-01-31,,,,,,2023,1,31
+1,"Nicolai, dhr. (Jos)",week 5,do,2023-02-02,,,,,,2023,2,2
+13,"Nicolai, dhr. (Jos)",week 7,ma,2023-02-13,,,,,,2023,2,13
+14,"Nicolai, dhr. (Jos)",week 7,di,2023-02-14,,,,,,2023,2,14
+15,"Nicolai, dhr. (Jos)",week 7,wo,2023-02-15,,,,,,2023,2,15
+16,"Nicolai, dhr. (Jos)",week 7,do,2023-02-16,,,,,,2023,2,16
+17,"Nicolai, dhr. (Jos)",week 7,vr,2023-02-17,,,,,,2023,2,17
+18,"Nicolai, dhr. (Jos)",week 7,za,2023-02-18,,,,,,2023,2,18
+19,"Nicolai, dhr. (Jos)",week 7,zo,2023-02-19,,,,,,2023,2,19
+20,"Nicolai, dhr. (Jos)",week 8,ma,2023-02-20,,,,,,2023,2,20
+21,"Nicolai, dhr. (Jos)",week 8,di,2023-02-21,,,,,,2023,2,21
+1,test,week 5,do,2023-02-02,test,korte dag,4.0,,,2023,2,2
+14,test,week 7,ma,2023-02-13,,,,,,2023,2,13
+15,test,week 7,di,2023-02-14,,,,,,2023,2,14
+16,test,week 7,wo,2023-02-15,,,,,,2023,2,15
+17,test,week 7,do,2023-02-16,,,,,,2023,2,16
+18,test,week 7,vr,2023-02-17,,,,,,2023,2,17
+19,test,week 7,za,2023-02-18,,,,,,2023,2,18
+20,test,week 7,zo,2023-02-19,,,,,,2023,2,19
+21,test,week 8,ma,2023-02-20,,,,,,2023,2,20
+22,test,week 8,di,2023-02-21,,,,,,2023,2,21
