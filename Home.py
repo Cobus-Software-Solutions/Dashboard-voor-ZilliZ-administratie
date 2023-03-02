@@ -76,8 +76,8 @@ if start_date > end_date:
 else:    
     st.subheader("2. Vul je inloggegevens voor ZilliZ in")
     login1, login2 = st.columns(2)
-    user_name = login1.text_input("ZilliZ gebruikersnaam", value="testvast")
-    password = login2.text_input("ZilliZ wachtwoord", value="!1Testvast")
+    user_name = login1.text_input("ZilliZ gebruikersnaam", value="")
+    password = login2.text_input("ZilliZ wachtwoord", value="")
     
     is_button_clicked =  st.button('Haal informatie op')
      
